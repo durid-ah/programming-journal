@@ -1,4 +1,6 @@
-// Data preparation.
+// This script reads the data from a csv file and
+// prepares it for display in a bar chart
+
 function filterData(data) {
    return data.filter(d => {
       return (
@@ -13,12 +15,14 @@ function filterData(data) {
 }
  
 function parse_to_barchart_format(data) {
+   // Create a map of the genre and the total revenue for each
    const dataMap = d3.rollup(
       data,
       v => d3.sum(v, leaf => leaf.revenue),
       d => d.genre
    );
 
+   // Convert map to object array
    const dataArray = Array.from(dataMap, d => ({ genre: d[0], revenue: d[1] }));
    return dataArray;
 }
