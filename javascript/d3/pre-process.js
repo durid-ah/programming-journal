@@ -12,15 +12,14 @@ function filterData(data) {
    });
 }
  
- function prepareBarChartData(data) {
+function parse_to_barchart_format(data) {
    const dataMap = d3.rollup(
       data,
       v => d3.sum(v, leaf => leaf.revenue),
       d => d.genre
    );
- 
+
    const dataArray = Array.from(dataMap, d => ({ genre: d[0], revenue: d[1] }));
- 
    return dataArray;
 }
  
@@ -54,22 +53,14 @@ function filterData(data) {
       vote_count: +d.vote_count,
    };
 }
- 
-
-
-
-// Main function.
-function prepare_data(movies) {
-   const moviesClean = filterData(movies);
-   const barChartData = prepareBarChartData(moviesClean).sort((a, b) => {
-      return d3.descending(a.revenue, b.revenue);
-   });
-   console.log(barChartData);
-}
 
 async function get_processed_data() {
    let data = await d3.csv('sample-data/movies.csv', type);
-   console.log(data)
+   const moviesClean = filterData(data);
+   const barChartData = parse_to_barchart_format(moviesClean).sort((a, b) => {
+      return d3.descending(a.revenue, b.revenue);
+   });
+   console.log(moviesClean);
 }
 
 get_processed_data();
