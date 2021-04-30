@@ -64,7 +64,6 @@ async function get_processed_data() {
    const barChartData = parse_to_barchart_format(moviesClean).sort((a, b) => {
       return d3.descending(a.revenue, b.revenue);
    });
-   console.log(moviesClean);
-}
 
-get_processed_data();
+   return barChartData;
+}
