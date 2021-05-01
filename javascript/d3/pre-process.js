@@ -58,8 +58,12 @@ function parse_to_barchart_format(data) {
    };
 }
 
+async function fetch_data() {
+   return d3.csv('sample-data/movies.csv', type);
+}
+
 async function get_processed_data() {
-   let data = await d3.csv('sample-data/movies.csv', type);
+   let data = await fetch_data()
    const moviesClean = filterData(data);
    const barChartData = parse_to_barchart_format(moviesClean).sort((a, b) => {
       return d3.descending(a.revenue, b.revenue);
