@@ -48,7 +48,7 @@ function prepare_line_chart_data(data) {
 async function process_line_data() {
    let data = await fetch_data();
    let filtered_data = filterData(data);
-   let prepared_data = prepare_line_chart_data(data);
+   let prepared_data = prepare_line_chart_data(filtered_data);
    return prepared_data;
 }
 
@@ -69,7 +69,7 @@ async function line_chart_main() {
    const width = 500 - margin.left - margin.right;
    const height = 500 - margin.top - margin.bottom;
 
-   process_line_data();
+   let data = process_line_data();
 }
 
 line_chart_main();
