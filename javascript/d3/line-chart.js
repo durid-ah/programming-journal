@@ -53,7 +53,7 @@ async function process_line_data() {
 }
 
 function build_chart_container(margin, width, height) {
-   let svg = d3.select('.scatter-plot-container')
+   let svg = d3.select('.line-chart-container')
    .append('svg')
    .attr('width', width + margin.left + margin.right)
    .attr('height', height + margin.top + margin.bottom)
@@ -63,13 +63,56 @@ function build_chart_container(margin, width, height) {
    return svg;
 }
 
+function build_line_x_scale(width, data) {
+   return d3.scaleTime()
+      .domain(d3.extent(data.dates))
+      .range([0, width]);
+}
+
+function build_line_y_scale(height, data) {
+   return d3.scaleLinear()
+      .domain([0, data.yMax])
+      .range([height, 0]);
+}
+
+function create_line_generator(x_scale, y_scale) {
+   let gen = d3
+      .line()
+      .x(d => x_scale(d.date))
+      .y(d => y_scale(d.value));
+
+   return gen;
+}
+
+function draw_lines(container, line_gen, data) {
+   const chart_group = container.append('g')
+      .attr('class', 'line-chart');
+
+   return chart_group.selectAll('.line-series')
+      .data(data.series)
+      .enter()
+      .append('path')
+      .attr('class', d => `line-series ${d.name.toLowerCase()}`)
+      .attr('d', d => line_gen(d.values))
+      .style('fill', 'none') // what the chart looks like from the inside
+      .style('stroke', d => d.color);
+}
+
 async function line_chart_main() {
    // Setting up the frame measurements
    const margin = {top: 40, bottom:40, left: 80, right: 40};
    const width = 500 - margin.left - margin.right;
    const height = 500 - margin.top - margin.bottom;
 
-   let data = process_line_data();
+   let data = await process_line_data();
+
+   let x_scale = build_line_x_scale(width, data);
+   let y_scale = build_line_y_scale(height, data);
+   let container = build_chart_container(margin, width, height);
+   let line_gen = create_line_generator(x_scale, y_scale);
+   let lines = draw_lines(container, line_gen, data);
+
+
 }
 
 line_chart_main();
