@@ -57,7 +57,6 @@ async function scatter_plot_main() {
    let yScale = build_scatter_y_scale(height, chart_data);
    let scatter_container = build_scatter_container(margin, width, height);
    let plots = draw_plots(scatter_container, chart_data, xScale, yScale);
-   console.log(chart_data);
 }
 
 scatter_plot_main();
