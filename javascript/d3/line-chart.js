@@ -98,6 +98,18 @@ function draw_lines(container, line_gen, data) {
       .style('stroke', d => d.color);
 }
 
+function configure_x_axis(x_scale) {
+   return d3.axisBottom(x_scale)
+      .tickSizeOuter(0);
+}
+
+function draw_x_axis(height, x_axis, container) {
+   return container.append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .attr('class', 'x axis')
+      .call(x_axis);
+}
+
 async function line_chart_main() {
    // Setting up the frame measurements
    const margin = {top: 40, bottom:40, left: 80, right: 40};
@@ -111,6 +123,8 @@ async function line_chart_main() {
    let container = build_chart_container(margin, width, height);
    let line_gen = create_line_generator(x_scale, y_scale);
    let lines = draw_lines(container, line_gen, data);
+   let x_axis = configure_x_axis(x_scale);
+   let x_axis_draw = draw_x_axis(height, x_axis, container);
 
 
 }
