@@ -110,9 +110,39 @@ function draw_x_axis(height, x_axis, container) {
       .call(x_axis);
 }
 
+function configure_y_axis(y_scale, width) {
+   return d3.axisLeft(y_scale)
+      .ticks(5)
+      .tickFormat(d3.format('~s'))
+      .tickSizeOuter(0)
+      .tickSizeInner(-width);
+}
+
+function draw_y_axis(container, y_axis) {
+   return container.append('g')
+      .attr('class', 'y axis')
+      .call(y_axis);
+}
+
+function add_series_labels(container, line_data, x_scale, y_scale) { // the title at the end of the lines
+   container.append('g')
+      .attr('class', 'series-labels')
+      .selectAll('.series-label')
+      .data(line_data.series)
+      .enter()
+      .append('text')
+      .attr('x', d => x_scale(d.values[d.values.length - 1].date) + 5)
+      .attr('y', d => y_scale(d.values[d.values.length - 1].value) + 5)
+      .text(d => d.name)
+      .style('dominant-baseline', 'central')
+      .style('font-size', '0.1 rem')
+      //.style('font-weight', 'bold')
+      .style('fill', d => d.color);
+}
+
 async function line_chart_main() {
    // Setting up the frame measurements
-   const margin = {top: 40, bottom:40, left: 80, right: 40};
+   const margin = {top: 40, bottom:40, left: 60, right: 70};
    const width = 500 - margin.left - margin.right;
    const height = 500 - margin.top - margin.bottom;
 
@@ -122,11 +152,12 @@ async function line_chart_main() {
    let y_scale = build_line_y_scale(height, data);
    let container = build_chart_container(margin, width, height);
    let line_gen = create_line_generator(x_scale, y_scale);
-   let lines = draw_lines(container, line_gen, data);
+   let _ = draw_lines(container, line_gen, data);
    let x_axis = configure_x_axis(x_scale);
    let x_axis_draw = draw_x_axis(height, x_axis, container);
-
-
+   let y_axis = configure_y_axis(y_scale, width);
+   let y_axis_draw = draw_y_axis(container, y_axis);
+   add_series_labels(container, data, x_scale, y_scale);
 }
 
 line_chart_main();
