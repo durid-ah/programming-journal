@@ -71,7 +71,6 @@ async function build_chart() {
    let bars = draw_bars(chart, chart_data, yScale, xScale);
    let xAxis = create_x_axis(xScale, chart, height);
    let yAxis = create_y_axis(yScale, chart);
-   console.log(chart);
 }
 
 build_chart();
