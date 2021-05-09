@@ -61,7 +61,7 @@ async function build_chart() {
    const width = 400 - margin.left - margin.right;
    const height = 500 - margin.top - margin.bottom;
 
-   let chart_data = await get_processed_data()
+   let chart_data = await get_processed_data();
 
    // each axis needs to be scaled so the values of every bar
    // is mapped to a proper width
