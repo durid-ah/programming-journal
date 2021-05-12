@@ -65,13 +65,13 @@ function update(bars, data, y_scale, x_scale, metric) {
             .append('rect')
             .attr('class', 'bar')
             .attr('y', d => y_scale(d.title))
-            .attr('width', d => x_scale(d.revenue))
+            .attr('width', d => x_scale(d[metric]))
             .attr('height', y_scale.bandwidth())
             .style('fill', 'dodgerblue'),
          
          update => update
             .attr('y', d => y_scale(d.title))
-            .attr('width', d => x_scale(d.revenue)),
+            .attr('width', d => x_scale(d[metric])),
 
          exit => exit.remove()
       );
@@ -80,10 +80,6 @@ function update(bars, data, y_scale, x_scale, metric) {
 function prepare_bar_container(chart) {
    return chart.append('g')
       .attr('class', 'bars');
-}
-
-function get_dataset() {
-   return this.dataset.name;
 }
 
 async function build_animated_chart() {
@@ -106,7 +102,6 @@ async function build_animated_chart() {
    update(bars, filtered_data, y_scale, x_scale, "revenue");
    
    function click() {
-      debugger;
       let new_metric = this.dataset.name;
       let new_data = filter_metric_data(new_metric, chart_data);
       update(bars, new_data, y_scale, x_scale, new_metric);
