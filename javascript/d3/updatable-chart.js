@@ -23,25 +23,26 @@ function get_y_scale(height) {
 }
 
 function draw_this_x_axis(xScale, chart, height) {
-   const xAxis = d3.axisTop(xScale)
+   const x_axis = d3.axisTop(xScale)
       .ticks(5)
       .tickFormat(d3.format('~s'))
       .tickSizeInner(-height)
       .tickSizeOuter(0);
 
-   return chart
+   const x_axis_draw = chart
       .append('g')
       .attr('class', 'x axis')
-      .call(xAxis);
+      .call(x_axis);
+
+   return [x_axis, x_axis_draw];
 }
 
 function draw_this_y_axis(yScale, chart) {
    const yAxis = d3.axisLeft(yScale).tickSize(0);
    const yAxisDraw = chart.append('g')
-      .attr('class', 'y axis')
-      .call(yAxis);
+      .attr('class', 'y axis');
    
-      yAxisDraw.selectAll('text').attr('dx', '-0.6em');
+   return [yAxis, yAxisDraw];
 }
 
 function create_graph_container(width, height, margin, container_name) {
@@ -53,28 +54,53 @@ function create_graph_container(width, height, margin, container_name) {
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 }
 
-function update(bars, data, y_scale, x_scale, metric) {
+function update(bars, data, y_scale, x_scale, metric, x_draw, y_draw, x_axis, y_axis) {
    x_scale.domain([0, d3.max(data, d => d[metric])]);
    y_scale.domain(data.map(d => d.title));
 
-   return bars
+   // Set up transition.
+   const dur = 1000;
+   const t = d3.transition().duration(dur);
+
+   bars
       .selectAll('.bar')
       .data(data)
       .join(
-         enter => enter
-            .append('rect')
-            .attr('class', 'bar')
-            .attr('y', d => y_scale(d.title))
-            .attr('width', d => x_scale(d[metric]))
-            .attr('height', y_scale.bandwidth())
-            .style('fill', 'dodgerblue'),
+         enter => {
+            enter
+              .append('rect')
+              .attr('class', 'bar')
+              .attr('y', d => y_scale(d.title))
+              .attr('height', y_scale.bandwidth())
+              .style('fill', 'lightcyan')
+              .transition(t)
+              .delay((_, i) => i * 20)
+              .attr('width', d => x_scale(d[metric]))
+              .style('fill', 'dodgerblue');
+         },
          
-         update => update
-            .attr('y', d => y_scale(d.title))
-            .attr('width', d => x_scale(d[metric])),
+         update =>{
+            update
+              .transition(t)
+              .delay((d, i) => i * 20)
+              .attr('y', d => y_scale((d.title)))
+              .attr('width', d => x_scale(d[metric]));
+         },
 
-         exit => exit.remove()
+         exit => {
+            exit
+              .transition()
+              .duration(dur / 2)
+              .style('fill-opacity', 0)
+              .remove();
+          }
       );
+   
+   // Update Axes.
+   x_draw.transition(t).call(x_axis.scale(x_scale));
+   y_draw.transition(t).call(y_axis.scale(y_scale));
+   y_draw.selectAll('text').attr('dx', '-0.6em');
+   
 }
 
 function prepare_bar_container(chart) {
@@ -96,15 +122,17 @@ async function build_animated_chart() {
    let chart = create_graph_container(width, height, margin, '.update-barchart-container');
    let bars = prepare_bar_container(chart);
 
-   draw_this_x_axis(x_scale, chart, height);
-   draw_this_y_axis(y_scale, chart);
+   let [x_axis, x_draw] = draw_this_x_axis(x_scale, chart, height);
+   let [y_axis, y_draw] = draw_this_y_axis(y_scale, chart);
 
-   update(bars, filtered_data, y_scale, x_scale, "revenue");
+   update(bars, filtered_data, y_scale, x_scale, "revenue", x_draw, y_draw, x_axis, y_axis);
    
    function click() {
       let new_metric = this.dataset.name;
       let new_data = filter_metric_data(new_metric, chart_data);
-      update(bars, new_data, y_scale, x_scale, new_metric);
+      update(
+         bars, new_data, y_scale, x_scale, new_metric, x_draw, y_draw, x_axis, y_axis
+      );
    }
 
    d3.selectAll('button').on('click', click);
