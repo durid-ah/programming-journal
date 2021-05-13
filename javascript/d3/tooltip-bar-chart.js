@@ -135,15 +135,32 @@ async function build_animated_chart() {
       );
    }
 
-   function mouse_over() {
-      debugger;
+   function mouse_over(event) {
+      const bar_data = d3.select(this).data()[0];
+
+      tip.style('left', event.clientX + 15 + 'px')
+         .style('top', event.clientY + 'px')
+         .style('opacity', 0.98)
+         .html('Hello tip!');
+   }
+
+   function mouse_move(event) {
+      tip.style('left', event.clientX + 15 + 'px')
+         .style('top', event.clientY + 'px');
+   }
+
+   function mouse_out(event) {
+      tip.style('opacity', 0);
    }
 
    d3.selectAll('button').on('click', click);
 
    // Adding the tooltip
    const tip = d3.select('.tooltip');
-   d3.selectAll('.bar').on('mouseover', mouse_over);
+   d3.selectAll('.bar')
+      .on('mouseover', mouse_over)
+      .on('mousemove', mouse_move)
+      .on('mouseout', mouse_out);
 
 }
 

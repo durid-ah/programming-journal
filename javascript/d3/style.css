@@ -17,4 +17,5 @@ text {
 .tooltip {
   position: fixed;
   opacity: 0;
+  pointer-events: none;
 }
