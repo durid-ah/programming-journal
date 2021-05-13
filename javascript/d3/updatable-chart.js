@@ -64,7 +64,7 @@ function update(bars, data, y_scale, x_scale, metric, x_draw, y_draw, x_axis, y_
 
    bars
       .selectAll('.bar')
-      .data(data)
+      .data(data, d => d.title)
       .join(
          enter => {
             enter
