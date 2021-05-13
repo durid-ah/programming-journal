@@ -135,7 +135,16 @@ async function build_animated_chart() {
       );
    }
 
+   function mouse_over() {
+      debugger;
+   }
+
    d3.selectAll('button').on('click', click);
+
+   // Adding the tooltip
+   const tip = d3.select('.tooltip');
+   d3.selectAll('.bar').on('mouseover', mouse_over);
+
 }
 
 build_animated_chart();

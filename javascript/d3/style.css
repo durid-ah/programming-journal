@@ -13,3 +13,8 @@ text {
 .x .tick line {
   stroke: white;
 }
+
+.tooltip {
+  position: fixed;
+  opacity: 0;
+}
