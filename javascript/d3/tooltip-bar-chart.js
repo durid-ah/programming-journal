@@ -119,7 +119,7 @@ async function build_animated_chart() {
    let x_scale = get_x_scale(width);
    let y_scale = get_y_scale(height);
 
-   let chart = create_graph_container(width, height, margin, '.update-barchart-container');
+   let chart = create_graph_container(width, height, margin, '.tooltip-barchart-container');
    let bars = prepare_bar_container(chart);
 
    let [x_axis, x_draw] = draw_this_x_axis(x_scale, chart, height);
