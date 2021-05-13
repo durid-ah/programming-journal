@@ -138,10 +138,28 @@ async function build_animated_chart() {
    function mouse_over(event) {
       const bar_data = d3.select(this).data()[0];
 
+      const body_data = [
+         ['Budget', bar_data.budget],
+         ['Revenue', bar_data.revenue],
+         ['Profit', bar_data.revenue - bar_data.budget],
+         ['Popularity', Math.round(bar_data.popularity)],
+         ['IMDB Rating', bar_data.vote_average],
+         ['Genres', bar_data.genres.join(', ')]
+      ];
+
       tip.style('left', event.clientX + 15 + 'px')
          .style('top', event.clientY + 'px')
          .style('opacity', 0.98)
-         .html('Hello tip!');
+         
+      tip.select('h3').text(`${bar_data.title}, ${bar_data.release_year}`);
+      tip.select('h4').text(`${bar_data.tagline}, ${bar_data.runtime} min`);
+
+      d3.select('.tip-body')
+         .selectAll('p')
+         .data(body_data)
+         .join('p')
+         .attr('class', 'tip-info')
+         .text(d => `${d[0]}: ${d[1]}`);
    }
 
    function mouse_move(event) {
@@ -156,6 +174,7 @@ async function build_animated_chart() {
    d3.selectAll('button').on('click', click);
 
    // Adding the tooltip
+   // TODO: Move this to the update function
    const tip = d3.select('.tooltip');
    d3.selectAll('.bar')
       .on('mouseover', mouse_over)
