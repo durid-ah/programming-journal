@@ -51,6 +51,17 @@ function add_brush_group(container, brush) {
       .call(brush);
 }
 
+function highlight_selected(data) {
+   const selected_ids = data.map(d => d.id);
+   d3.selectAll('.scatter')
+      .filter(d => selected_ids.includes(d.id))
+      .style('fill', 'coral');
+
+   d3.selectAll('.scatter')
+      .filter(d => !selected_ids.includes(d.id))
+      .style('fill', 'dodgerblue');
+}
+
 function update_selected(data) {
    d3.select('.selected-body')
       .selectAll('.selected-element')
@@ -89,11 +100,9 @@ async function scatter_plot_main() {
                x0 <= xScale(d.budget) && xScale(d.budget) < x1 &&
                y0 <= yScale(d.revenue) && yScale(d.revenue) < y1 
          )
-
       }
-
       update_selected(selected_data);
-
+      highlight_selected(selected_data);
    }
 
    d3.select('.selected-container')
