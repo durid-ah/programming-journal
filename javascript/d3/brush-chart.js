@@ -51,6 +51,22 @@ function add_brush_group(container, brush) {
       .call(brush);
 }
 
+function update_selected(data) {
+   d3.select('.selected-body')
+      .selectAll('.selected-element')
+      .data(data, d => d.id)
+      .join(
+         enter => enter.append('p')
+         .attr('class', 'selected-element')
+         .html(
+            d => `<span class="selected-title">${d.title}</span>, ${d.release_year} <br> budget: ${d.budget} | revenue: ${d.revenue}`
+         ),
+
+         update => update,
+         exit => exit.remove()
+      )
+}
+
 
 async function scatter_plot_main() {
    // Setting up the frame measurements
@@ -65,19 +81,28 @@ async function scatter_plot_main() {
    let plots = draw_plots(scatter_container, chart_data, xScale, yScale);
 
    function brushed(event) {
+      let selected_data = [];
       if (event.selection) {
          const [[x0, y0], [x1, y1]] = event.selection;
-         const selected_data = chart_data.filter(
+         selected_data = chart_data.filter(
             d =>
                x0 <= xScale(d.budget) && xScale(d.budget) < x1 &&
                y0 <= yScale(d.revenue) && yScale(d.revenue) < y1 
          )
 
-         console.log(selected_data);
       }
+
+      update_selected(selected_data);
+
    }
 
-   const brush = d3.brush().on('brush', brushed);
+   d3.select('.selected-container')
+      .style('width', `${width + margin.left + margin.right}px`)
+      .style('height', `${height + margin.top + margin.bottom}px`)
+
+
+   const brush = d3.brush()
+      .extent([[0,0], [width, height]]).on('brush end', brushed); //brush and end are two separate events
    add_brush_group(scatter_container, brush);
 }
 
