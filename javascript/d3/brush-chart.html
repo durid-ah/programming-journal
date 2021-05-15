@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Bar Chart</title>
+    <title>Brush Chart</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="node_modules/d3/dist/d3.min.js"></script>
@@ -13,10 +13,9 @@
 
    <!-- The view of the interactive chart goes here-->
     <div class="brush-container"></div>
-    <div class="controls">
-      <button data-name="revenue">Revenue</button>
-      <button data-name="budget">Budget</button>
-      <button data-name="popularity">Popularity</button>
+    <div class="selected-container">
+      <div class="selected-header">Selected Element</div>
+      <div class="selected-body"></div>
     </div>
 
     <!-- This is the container's tooltip-->
